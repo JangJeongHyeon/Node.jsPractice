@@ -1,0 +1,98 @@
+const condition = true; // if true then do resolve and if not do reject
+const promise = new Promise((resolve, reject) => {
+    if (condition) {
+        resolve('성공');
+    } else {
+        reject('실패');
+    }
+});
+
+
+promise
+    .then((message) => {
+        console.log(message); // success( resolve )
+    }).catch((error) => {
+        console.log(error); // fail ( reject )
+    });
+
+
+promise
+    .then((message) => {
+        return new Promise((resolve, reject) => {
+            resolve(message);
+        });
+    })
+    .then((message2) => {
+        return new Promise((resolve, reject) => {
+            resolve(message2);
+        });
+    })
+    .then((message3) => {
+        console.log(message3);
+    })
+    .catch((error) => {
+        console.log(error);
+    });
+
+
+
+/**
+ * Change callback to promise
+ */
+
+
+
+// before
+function findAndSaveUser(User) {
+    User.findOne({}, (err, user) => {
+        // first callback
+        if (err) {
+            return console.log(err);
+        }
+        user.name = 'zero';
+        user.save((err) => {
+            // Second callback
+            if (err) {
+                return console.log(err);
+            }
+            User.findOne({
+                gender: 'm'
+            }, (err, user) => {
+                // Third callback
+            });
+        });
+    });
+}
+
+
+// after
+function findAndSaveUser(Users) {
+    Users.findOne({})
+        .then((user) => {
+            user.name = 'zero';
+            return user.save();
+        })
+        .then((user) => {
+            return Users.findOne({
+                gender: 'm'
+            });
+        })
+        .then((user) => {
+            //
+        })
+        .catch(err => {
+            console.log(err);
+        });
+}
+
+
+// call many promise at the same time
+const promise1 = Prmoise.resolve('성공1');
+const promise2 = Promise.resolve('성공2');
+Promise.all([promise1, promise2])
+    .then((result)=>{
+        console.log(result); // ['성공1', '성공2']
+    })
+    .catch((error)=>{
+        console.error(error);
+    });
